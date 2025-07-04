@@ -2,8 +2,11 @@
 
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Button } from '@/components/ui/button'
 import { ArrowRight } from 'lucide-react'
+
+import { Button } from '@/components/ui/button'
+import { StravaConnectButton } from '@/components/strava-connect'
+import { on } from 'events'
 
 // Types
 type Step = 'signin' | 'select' | 'dashboard'
@@ -34,10 +37,12 @@ function Slide({
   title,
   onNext,
   isLastStep = false,
+  children,
 }: {
   title: string
-  onNext: () => void
+  onNext?: () => void
   isLastStep?: boolean
+  children?: React.ReactNode
 }) {
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -61,30 +66,40 @@ function Slide({
       animate="visible"
       className="flex flex-col items-center justify-center min-h-screen w-full p-8"
     >
-      <motion.h1
-        variants={itemVariants}
-        className="text-6xl md:text-8xl font-bold text-center mb-16 text-black"
-      >
-        {title}
-      </motion.h1>
-
-      <motion.div variants={itemVariants}>
-        <Button
-          onClick={onNext}
-          size="lg"
-          className="text-lg px-8 py-4 rounded-full bg-black text-white hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+      {title && (
+        <motion.h1
+          variants={itemVariants}
+          className="text-6xl md:text-8xl font-bold text-center mb-16 text-black"
         >
-          {isLastStep ? 'Get Started' : 'Next'}
-          <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
-      </motion.div>
+          {title}
+        </motion.h1>
+      )}
+
+      {children}
+
+      {onNext && (
+        <motion.div variants={itemVariants}>
+          <Button
+            onClick={onNext}
+            size="lg"
+            className="text-lg px-8 py-4 rounded-full bg-black text-white hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+          >
+            {isLastStep ? 'Get Started' : 'Next'}
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+        </motion.div>
+      )}
     </motion.div>
   )
 }
 
 // Sign In Step Component
 function SignInStep({ onNext }: { onNext: () => void }) {
-  return <Slide title="Sign In" onNext={onNext} />
+  return (
+    <Slide title="">
+      <StravaConnectButton onClick={onNext} />
+    </Slide>
+  )
 }
 
 // Select Step Component

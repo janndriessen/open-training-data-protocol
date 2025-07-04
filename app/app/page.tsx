@@ -1,103 +1,161 @@
-import Image from "next/image";
+'use client'
 
-export default function Home() {
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from '@/components/ui/button'
+import { ArrowRight } from 'lucide-react'
+
+// Types
+type Step = 'signin' | 'select' | 'dashboard'
+
+// Custom hook for managing flow state
+function useMultiStepFlow(steps: Step[], initialStep: Step = steps[0]) {
+  const [currentStep, setCurrentStep] = useState<Step>(initialStep)
+  const [direction, setDirection] = useState<'forward' | 'backward'>('forward')
+
+  const nextStep = () => {
+    const currentIndex = steps.indexOf(currentStep)
+    if (currentIndex < steps.length - 1) {
+      setDirection('forward')
+      setCurrentStep(steps[currentIndex + 1])
+    }
+  }
+
+  return {
+    currentStep,
+    direction,
+    nextStep,
+    isLastStep: steps.indexOf(currentStep) === steps.length - 1,
+  }
+}
+
+// Generic slide component
+function Slide({
+  title,
+  onNext,
+  isLastStep = false,
+}: {
+  title: string
+  onNext: () => void
+  isLastStep?: boolean
+}) {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.3,
+      },
+    },
+  }
+
+  const itemVariants = {
+    hidden: { y: 30, opacity: 0 },
+    visible: { y: 0, opacity: 1 },
+  }
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="flex flex-col items-center justify-center min-h-screen w-full p-8"
+    >
+      <motion.h1
+        variants={itemVariants}
+        className="text-6xl md:text-8xl font-bold text-center mb-16 text-black"
+      >
+        {title}
+      </motion.h1>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      <motion.div variants={itemVariants}>
+        <Button
+          onClick={onNext}
+          size="lg"
+          className="text-lg px-8 py-4 rounded-full bg-black text-white hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+          {isLastStep ? 'Get Started' : 'Next'}
+          <ArrowRight className="ml-2 h-5 w-5" />
+        </Button>
+      </motion.div>
+    </motion.div>
+  )
+}
+
+// Sign In Step Component
+function SignInStep({ onNext }: { onNext: () => void }) {
+  return <Slide title="Sign In" onNext={onNext} />
+}
+
+// Select Step Component
+function SelectStep({ onNext }: { onNext: () => void }) {
+  return <Slide title="Select" onNext={onNext} />
+}
+
+// Dashboard Step Component
+function DashboardStep({ onNext }: { onNext: () => void }) {
+  return <Slide title="Dashboard" onNext={onNext} isLastStep={true} />
+}
+
+// Main Onboarding Flow Component
+export default function OnboardingFlow() {
+  const steps: Step[] = ['signin', 'select', 'dashboard']
+  const { currentStep, direction, nextStep, isLastStep } =
+    useMultiStepFlow(steps)
+
+  // Animation variants for step transitions
+  const stepVariants = {
+    initial: (direction: 'forward' | 'backward') => ({
+      opacity: 0,
+      x: direction === 'forward' ? 100 : -100,
+      scale: 0.95,
+    }),
+    animate: {
+      opacity: 1,
+      x: 0,
+      scale: 1,
+    },
+    exit: (direction: 'forward' | 'backward') => ({
+      opacity: 0,
+      x: direction === 'forward' ? -100 : 100,
+      scale: 0.95,
+    }),
+  }
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case 'signin':
+        return <SignInStep onNext={nextStep} />
+      case 'select':
+        return <SelectStep onNext={nextStep} />
+      case 'dashboard':
+        return (
+          <DashboardStep onNext={() => (window.location.href = '/dashboard')} />
+        )
+      default:
+        return null
+    }
+  }
+
+  return (
+    <div className="min-h-screen w-full bg-white overflow-hidden">
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.div
+          key={currentStep}
+          custom={direction}
+          variants={stepVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={{
+            duration: 0.5,
+            ease: [0.4, 0, 0.2, 1],
+          }}
+          className="w-full h-full"
         >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {renderStep()}
+        </motion.div>
+      </AnimatePresence>
     </div>
-  );
+  )
 }

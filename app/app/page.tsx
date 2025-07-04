@@ -4,9 +4,9 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
 
-import { Button } from '@/components/ui/button'
+import { PrivyConnect } from '@/components/privy'
 import { StravaConnectButton } from '@/components/strava-connect'
-import { on } from 'events'
+import { Button } from '@/components/ui/button'
 
 // Types
 type Step = 'signin' | 'select' | 'dashboard'
@@ -77,7 +77,7 @@ function Slide({
 
       {children}
 
-      {onNext && (
+      {onNext && !isLastStep && (
         <motion.div variants={itemVariants}>
           <Button
             onClick={onNext}
@@ -109,7 +109,11 @@ function SelectStep({ onNext }: { onNext: () => void }) {
 
 // Dashboard Step Component
 function DashboardStep({ onNext }: { onNext: () => void }) {
-  return <Slide title="Dashboard" onNext={onNext} isLastStep={true} />
+  return (
+    <Slide title="" onNext={onNext} isLastStep={true}>
+      <PrivyConnect />
+    </Slide>
+  )
 }
 
 // Main Onboarding Flow Component

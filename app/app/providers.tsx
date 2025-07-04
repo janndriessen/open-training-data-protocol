@@ -10,11 +10,33 @@ export function Providers({ children }: { children: React.ReactNode }) {
       appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID!}
       clientId={process.env.NEXT_PUBLIC_PRIVY_CLIENT_ID!}
       config={{
-        // Create embedded wallets for users who don't have a wallet
+        appearance: {
+          accentColor: '#6A6FF5',
+          theme: '#222224',
+          showWalletLoginFirst: false,
+          logo: 'https://auth.privy.io/logos/privy-logo-dark.png',
+          walletChainType: 'ethereum-only',
+          walletList: [
+            'detected_ethereum_wallets',
+            'metamask',
+            'coinbase_wallet',
+            'rainbow',
+            'wallet_connect',
+          ],
+        },
+        loginMethods: ['email', 'wallet'],
         embeddedWallets: {
+          createOnLogin: 'users-without-wallets',
+          requireUserPasswordOnCreate: false,
           ethereum: {
             createOnLogin: 'users-without-wallets',
           },
+          solana: {
+            createOnLogin: 'off',
+          },
+        },
+        mfa: {
+          noPromptOnMfaRequired: false,
         },
       }}
     >

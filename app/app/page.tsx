@@ -262,8 +262,8 @@ export default function OnboardingFlow() {
 
   const handleUpload = () => {
     setSelectOptions([
-      { key: 'upload', value: 'Upload new training data' },
-      { key: 'explore', value: 'Explore public datasets' },
+      { key: 'run', value: 'A nice run (Jan 2025)' },
+      { key: 'bike', value: 'An awesome bike ride (July 2025)' },
     ])
     setStep('signin')
   }

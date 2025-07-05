@@ -246,7 +246,14 @@ export default function OnboardingFlow() {
     try {
       if (ready && authenticated) {
         const options = await getTrainings(user?.wallet?.address ?? '')
-        setSelectOptions(options.length > 0 ? options : [])
+        setSelectOptions(
+          options.activities.length > 0
+            ? options.activities.map((activity: string) => ({
+                key: activity,
+                value: activity,
+              }))
+            : []
+        )
         setStep('select')
       } else {
         setStep('connect')

@@ -8,6 +8,7 @@ import { usePrivy } from '@privy-io/react-auth'
 import { PrivyConnect } from '@/components/privy'
 import { StravaConnectButton } from '@/components/strava-connect'
 import { Button } from '@/components/ui/button'
+import { getTrainings } from '@/lib/trainings'
 
 // Types
 type Step = 'welcome' | 'signin' | 'select' | 'connect'
@@ -107,10 +108,12 @@ function WelcomeActionButton({
   children,
   onClick,
   variant = 'default',
+  disabled = false,
 }: {
   children: React.ReactNode
-  onClick: () => void
+  onClick: () => void | Promise<void>
   variant?: 'default' | 'outline'
+  disabled?: boolean
 }) {
   const baseClass =
     'text-xl px-8 py-4 min-h-16 rounded-full transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl w-full md:w-auto'
@@ -124,6 +127,7 @@ function WelcomeActionButton({
       size="lg"
       variant={variant === 'outline' ? 'outline' : undefined}
       className={`${baseClass} ${variantClass}`}
+      disabled={disabled}
     >
       {children}
     </Button>
@@ -131,11 +135,16 @@ function WelcomeActionButton({
 }
 
 type WelcomeStepProps = {
-  onShowOnchain: () => void
+  onShowOnchain: () => void | Promise<void>
   onUpload: () => void
+  loadingOptions?: boolean
 }
 
-function WelcomeStep({ onShowOnchain, onUpload }: WelcomeStepProps) {
+function WelcomeStep({
+  onShowOnchain,
+  onUpload,
+  loadingOptions,
+}: WelcomeStepProps) {
   return (
     <Slide title="Open Training Data Protocol">
       <div className="flex flex-col items-center w-full max-w-xl">
@@ -143,8 +152,11 @@ function WelcomeStep({ onShowOnchain, onUpload }: WelcomeStepProps) {
           Free your training data
         </h2>
         <div className="flex flex-col gap-4 w-full justify-center">
-          <WelcomeActionButton onClick={onShowOnchain}>
-            Show my onchain training data
+          <WelcomeActionButton
+            onClick={onShowOnchain}
+            disabled={loadingOptions}
+          >
+            {loadingOptions ? 'Loading...' : 'Show my onchain training data'}
           </WelcomeActionButton>
           <WelcomeActionButton onClick={onUpload} variant="outline">
             Upload new training data
@@ -198,22 +210,18 @@ function SelectList({
 }
 
 // Select Step Component
-function SelectStep({ onNext }: { onNext: () => void }) {
-  // Example options array
-  const options: SelectListItem[] = [
-    { key: 'onchain', value: 'Show my onchain training data' },
-    { key: 'upload', value: 'Upload new training data' },
-    { key: 'explore', value: 'Explore public datasets' },
-  ]
+function SelectStep({
+  onNext,
+  items,
+}: {
+  onNext: () => void
+  items: SelectListItem[]
+}) {
   const [selected, setSelected] = useState<string | undefined>()
 
   return (
     <Slide title="Select" onNext={onNext}>
-      <SelectList
-        items={options}
-        selectedKey={selected}
-        onSelect={setSelected}
-      />
+      <SelectList items={items} selectedKey={selected} onSelect={setSelected} />
     </Slide>
   )
 }
@@ -229,10 +237,36 @@ function ConnectStep({ onNext }: { onNext: () => void }) {
 
 // Main Onboarding Flow Component
 export default function OnboardingFlow() {
-  const { ready, authenticated } = usePrivy()
+  const { ready, authenticated, user } = usePrivy()
   const steps: Step[] = ['welcome', 'signin', 'select', 'connect']
   const { currentStep, direction, nextStep, setStep, isLastStep } =
     useMultiStepFlow(steps)
+
+  const [selectOptions, setSelectOptions] = useState<SelectListItem[]>([])
+  const [loadingOptions, setLoadingOptions] = useState(false)
+
+  const handleShowOnchain = async () => {
+    setLoadingOptions(true)
+    try {
+      if (ready && authenticated) {
+        const options = await getTrainings(user?.wallet?.address ?? '')
+        setSelectOptions(options.length > 0 ? options : [])
+        setStep('select')
+      } else {
+        setStep('connect')
+      }
+    } finally {
+      setLoadingOptions(false)
+    }
+  }
+
+  const handleUpload = () => {
+    setSelectOptions([
+      { key: 'upload', value: 'Upload new training data' },
+      { key: 'explore', value: 'Explore public datasets' },
+    ])
+    setStep('signin')
+  }
 
   // Animation variants for step transitions
   const stepVariants = {
@@ -258,20 +292,15 @@ export default function OnboardingFlow() {
       case 'welcome':
         return (
           <WelcomeStep
-            onShowOnchain={() => {
-              if (ready && authenticated) {
-                setStep('select')
-              } else {
-                setStep('connect')
-              }
-            }}
-            onUpload={() => setStep('signin')}
+            onShowOnchain={handleShowOnchain}
+            onUpload={handleUpload}
+            loadingOptions={loadingOptions}
           />
         )
       case 'signin':
         return <SignInStep onNext={nextStep} />
       case 'select':
-        return <SelectStep onNext={nextStep} />
+        return <SelectStep onNext={nextStep} items={selectOptions} />
       case 'connect':
         return (
           <ConnectStep onNext={() => (window.location.href = '/dashboard')} />

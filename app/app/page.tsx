@@ -89,7 +89,7 @@ function Slide({
           <Button
             onClick={onNext}
             size="lg"
-            className="text-lg px-4 py-4 rounded-full bg-black text-white hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="text-lg px-4 py-4 rounded-full bg-black text-white hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl mt-8"
           >
             Next
             <ArrowRight className="ml-2 h-5 w-5" />
@@ -168,7 +168,10 @@ function WelcomeStep({
 // Sign In Step Component
 function SignInStep({ onNext }: { onNext: () => void }) {
   return (
-    <Slide title="">
+    <Slide title="Connect your Strava">
+      <h2 className="text-2xl font-semibold text-center mb-8 text-gray-400">
+        Connect your Strava account to select training data to upload
+      </h2>
       <StravaConnectButton onClick={onNext} />
     </Slide>
   )
@@ -187,7 +190,7 @@ function SelectList({
   selectedKey?: string
 }) {
   return (
-    <ul className="w-full max-w-xl mx-auto flex flex-col gap-4">
+    <ul className="w-full max-w-xl mx-auto flex flex-col gap-4 mt-4">
       {items.map((item) => (
         <li key={item.key}>
           <button
@@ -218,7 +221,7 @@ function SelectStep({
   const [selected, setSelected] = useState<string | undefined>()
 
   return (
-    <Slide title="Select" onNext={onNext}>
+    <Slide title="Select Training" onNext={onNext}>
       <SelectList items={items} selectedKey={selected} onSelect={setSelected} />
     </Slide>
   )

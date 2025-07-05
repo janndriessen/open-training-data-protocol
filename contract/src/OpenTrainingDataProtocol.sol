@@ -19,4 +19,12 @@ contract OpenTrainingDataProtocol {
         uint16 duration;          // Duration in seconds
         bytes32 fileId;           // Encoded Walrus fileId
     }
+
+    // Events
+    event ActivityStored(
+        uint8 indexed activityType,
+        bytes32 indexed activityId,
+        address indexed user,
+        uint32 timestamp
+    );
 }

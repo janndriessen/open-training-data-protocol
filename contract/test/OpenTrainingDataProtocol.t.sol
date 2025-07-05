@@ -54,4 +54,10 @@ contract OpenTrainingDataProtocolTest is Test {
         vm.expectRevert("Activity not found");
         protocol.getActivity(bytes32(uint256(0xdead)));
     }
+
+    function testActivityTypeConstants() public view {
+        assertEq(protocol.ACTIVITY_TYPE_SWIM(), 0);
+        assertEq(protocol.ACTIVITY_TYPE_BIKE(), 1);
+        assertEq(protocol.ACTIVITY_TYPE_RUN(), 2);
+    }
 }

@@ -11,11 +11,16 @@ contract OpenTrainingDataProtocol {
     // Protocol version
     uint8 public constant PROTOCOL_VERSION = 1;
     
+    // Pre-determined activity types
+    uint8 public constant ACTIVITY_TYPE_SWIM = 0;
+    uint8 public constant ACTIVITY_TYPE_BIKE = 1;
+    uint8 public constant ACTIVITY_TYPE_RUN = 2;
+    
     struct Activity {
         address user;   
         uint8 version;            // Protocol version when stored
         uint32 timestamp;         // Activity timestamp
-        uint8 activityType;       // Activity type ID (0-255)
+        uint8 activityType;       // Activity type ID (0-255). 0: Swim, 1: Bike, 2: Run
         uint32 duration;          // Duration in seconds
         bytes32 fileId;           // Encoded Walrus fileId
     }
@@ -40,7 +45,7 @@ contract OpenTrainingDataProtocol {
     /**
         * @dev Store a new activity
      * @param fileId Hash of the Walrus uploadId
-     * @param activityType Activity type ID
+     * @param activityType Activity type ID (0: Swim, 1: Bike, 2: Run)
      * @param timestamp Activity timestamp
      * @param duration Duration in seconds
      */

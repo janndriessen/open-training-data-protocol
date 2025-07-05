@@ -230,7 +230,10 @@ function SelectStep({
 // Connect Step Component
 function ConnectStep({ onNext }: { onNext: () => void }) {
   return (
-    <Slide title="" onNext={onNext}>
+    <Slide title="Connect with Privy">
+      <h2 className="text-2xl font-semibold text-center mb-8 text-gray-400">
+        Connect or create your account with Privy to upload your training data
+      </h2>
       <PrivyConnect onConnect={onNext} />
     </Slide>
   )

@@ -29,7 +29,7 @@ export function PrivyConnect({ onConnect }: { onConnect: () => void }) {
         size="lg"
         className="text-lg px-8 py-4 rounded-full bg-black text-white hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
       >
-        {'Connect'}
+        {'Connect with Privy'}
       </Button>
     </div>
   )

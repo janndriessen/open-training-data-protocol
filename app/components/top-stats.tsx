@@ -28,7 +28,7 @@ export function TopStats({
   return (
     <div className="flex flex-row gap-4 px-6 w-full">
       <div className="flex flex-row space-x-4 flex-1">
-        <Card className="p-4 flex-1">
+        <Card className="p-8 flex-1">
           <CardContent className="p-0">
             <h2 className="text-gray-500 text-sm mb-2">
               {data.session.activity_type}
@@ -57,7 +57,7 @@ export function TopStats({
           </CardContent>
         </Card>
       </div>
-      <Card className="p-4 bg-gray-900 text-white flex-1">
+      <Card className="p-8 bg-gray-900 text-white flex-1">
         <CardContent className="p-0 space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">

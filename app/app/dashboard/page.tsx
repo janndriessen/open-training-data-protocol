@@ -17,7 +17,8 @@ export default function Page() {
   const [isStoringTrainingPopupOpen, setIsStoringTrainingPopupOpen] =
     useState(false)
 
-  const { storeActivity } = useActivity()
+  const { data: activityData, storeActivity } = useActivity()
+  console.log(activityData)
 
   const handleStoreClick = () => {
     storeActivity(null)

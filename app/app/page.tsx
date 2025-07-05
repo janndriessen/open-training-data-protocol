@@ -76,7 +76,7 @@ function Slide({
       {title && (
         <motion.h2
           variants={itemVariants}
-          className="text-6xl font-bold text-center mb-4 text-black"
+          className="text-6xl font-bold text-center mb-4 text-gray-800"
         >
           {title}
         </motion.h2>
@@ -116,8 +116,8 @@ function WelcomeActionButton({
     'text-xl px-4 py-4 min-h-16 rounded-full transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl'
   const variantClass =
     variant === 'outline'
-      ? 'border-black text-black hover:bg-gray-100'
-      : 'bg-black text-white hover:bg-gray-800'
+      ? 'border-gray-100 text-black hover:bg-gray-100'
+      : 'text-white bg-gray-800 hover:bg-gray-700'
   return (
     <Button
       onClick={onClick}
@@ -148,7 +148,7 @@ function WelcomeStep({
         <h2 className="text-5xl font-semibold text-center mb-8 text-gray-400">
           Free your training data
         </h2>
-        <p className="text-6xl mb-16">🏃‍♀️🏃🚴‍♀️🏋️🏄‍♂️⛷️🏊‍♂️</p>
+        <p className="text-5xl mb-16">🏃‍♀️🏃 🚴‍♀️ 🏋️ 🏄‍♂️ ⛷️ 🏊‍♂️</p>
         <div className="flex flex-col gap-4 w-full justify-center">
           <WelcomeActionButton
             onClick={onShowOnchain}

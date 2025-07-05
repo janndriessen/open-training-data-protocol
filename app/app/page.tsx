@@ -9,7 +9,7 @@ import { StravaConnectButton } from '@/components/strava-connect'
 import { Button } from '@/components/ui/button'
 
 // Types
-type Step = 'signin' | 'select' | 'dashboard'
+type Step = 'welcome' | 'signin' | 'select' | 'dashboard'
 
 // Custom hook for managing flow state
 function useMultiStepFlow(steps: Step[], initialStep: Step = steps[0]) {
@@ -24,10 +24,18 @@ function useMultiStepFlow(steps: Step[], initialStep: Step = steps[0]) {
     }
   }
 
+  const setStep = (step: Step) => {
+    const currentIndex = steps.indexOf(currentStep)
+    const nextIndex = steps.indexOf(step)
+    setDirection(nextIndex > currentIndex ? 'forward' : 'backward')
+    setCurrentStep(step)
+  }
+
   return {
     currentStep,
     direction,
     nextStep,
+    setStep,
     isLastStep: steps.indexOf(currentStep) === steps.length - 1,
   }
 }
@@ -67,12 +75,12 @@ function Slide({
       className="flex flex-col items-center justify-center min-h-screen w-full p-8"
     >
       {title && (
-        <motion.h1
+        <motion.h2
           variants={itemVariants}
-          className="text-6xl md:text-8xl font-bold text-center mb-16 text-black"
+          className="text-6xl font-bold text-center mb-16 text-black"
         >
           {title}
-        </motion.h1>
+        </motion.h2>
       )}
 
       {children}
@@ -93,6 +101,59 @@ function Slide({
   )
 }
 
+// Welcome Step Component
+function WelcomeActionButton({
+  children,
+  onClick,
+  variant = 'default',
+}: {
+  children: React.ReactNode
+  onClick: () => void
+  variant?: 'default' | 'outline'
+}) {
+  const baseClass =
+    'text-xl px-8 py-4 min-h-16 rounded-full transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl w-full md:w-auto'
+  const variantClass =
+    variant === 'outline'
+      ? 'border-black text-black hover:bg-gray-100'
+      : 'bg-black text-white hover:bg-gray-800'
+  return (
+    <Button
+      onClick={onClick}
+      size="lg"
+      variant={variant === 'outline' ? 'outline' : undefined}
+      className={`${baseClass} ${variantClass}`}
+    >
+      {children}
+    </Button>
+  )
+}
+
+type WelcomeStepProps = {
+  onShowOnchain: () => void
+  onUpload: () => void
+}
+
+function WelcomeStep({ onShowOnchain, onUpload }: WelcomeStepProps) {
+  return (
+    <Slide title="Open Training Data Protocol">
+      <div className="flex flex-col items-center w-full max-w-xl">
+        <h2 className="text-4xl font-semibold text-center mb-8 text-gray-700">
+          Free your training data
+        </h2>
+        <div className="flex flex-col gap-4 w-full justify-center">
+          <WelcomeActionButton onClick={onShowOnchain}>
+            Show my onchain training data
+          </WelcomeActionButton>
+          <WelcomeActionButton onClick={onUpload} variant="outline">
+            Upload new training data
+          </WelcomeActionButton>
+        </div>
+      </div>
+    </Slide>
+  )
+}
+
 // Sign In Step Component
 function SignInStep({ onNext }: { onNext: () => void }) {
   return (
@@ -102,9 +163,58 @@ function SignInStep({ onNext }: { onNext: () => void }) {
   )
 }
 
+// SelectList component for the select step
+type SelectListItem = { key: string; value: string }
+
+function SelectList({
+  items,
+  onSelect,
+  selectedKey,
+}: {
+  items: SelectListItem[]
+  onSelect: (key: string) => void
+  selectedKey?: string
+}) {
+  return (
+    <ul className="w-full max-w-xl mx-auto flex flex-col gap-4">
+      {items.map((item) => (
+        <li key={item.key}>
+          <button
+            className={`w-full text-left px-6 py-4 rounded-xl border-2 transition-all font-medium text-lg md:text-xl shadow-sm hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-black/30
+              ${
+                selectedKey === item.key
+                  ? 'border-black bg-black text-white'
+                  : 'border-gray-300 bg-white text-black hover:bg-gray-50'
+              }`}
+            onClick={() => onSelect(item.key)}
+          >
+            {item.value}
+          </button>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 // Select Step Component
 function SelectStep({ onNext }: { onNext: () => void }) {
-  return <Slide title="Select" onNext={onNext} />
+  // Example options array
+  const options: SelectListItem[] = [
+    { key: 'onchain', value: 'Show my onchain training data' },
+    { key: 'upload', value: 'Upload new training data' },
+    { key: 'explore', value: 'Explore public datasets' },
+  ]
+  const [selected, setSelected] = useState<string | undefined>()
+
+  return (
+    <Slide title="Select" onNext={onNext}>
+      <SelectList
+        items={options}
+        selectedKey={selected}
+        onSelect={setSelected}
+      />
+    </Slide>
+  )
 }
 
 // Dashboard Step Component
@@ -118,8 +228,8 @@ function DashboardStep({ onNext }: { onNext: () => void }) {
 
 // Main Onboarding Flow Component
 export default function OnboardingFlow() {
-  const steps: Step[] = ['signin', 'select', 'dashboard']
-  const { currentStep, direction, nextStep, isLastStep } =
+  const steps: Step[] = ['welcome', 'signin', 'select', 'dashboard']
+  const { currentStep, direction, nextStep, setStep, isLastStep } =
     useMultiStepFlow(steps)
 
   // Animation variants for step transitions
@@ -143,6 +253,13 @@ export default function OnboardingFlow() {
 
   const renderStep = () => {
     switch (currentStep) {
+      case 'welcome':
+        return (
+          <WelcomeStep
+            onShowOnchain={() => setStep('dashboard')}
+            onUpload={() => setStep('signin')}
+          />
+        )
       case 'signin':
         return <SignInStep onNext={nextStep} />
       case 'select':

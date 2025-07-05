@@ -1,14 +1,27 @@
-import { useLoginWithEmail, usePrivy } from '@privy-io/react-auth'
-
+import { useLogin, usePrivy } from '@privy-io/react-auth'
 import { Button } from '@/components/ui/button'
+import { useEffect } from 'react'
 
 // TODO: callback on login - or track in page
-export function PrivyConnect() {
-  const { ready, login } = usePrivy()
+export function PrivyConnect({ onConnect }: { onConnect: () => void }) {
+  const { ready, authenticated } = usePrivy()
+  const { login } = useLogin({
+    onComplete: ({ user, isNewUser }) => {
+      console.log('user', user)
+      console.log('isNewUser', isNewUser)
+      onConnect
+    },
+  })
 
   if (!ready) {
     return <div>Loading...</div>
   }
+
+  useEffect(() => {
+    if (authenticated) {
+      onConnect()
+    }
+  }, [authenticated, onConnect])
 
   return (
     <div>

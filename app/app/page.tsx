@@ -111,7 +111,7 @@ function SelectStep({ onNext }: { onNext: () => void }) {
 function DashboardStep({ onNext }: { onNext: () => void }) {
   return (
     <Slide title="" onNext={onNext} isLastStep={true}>
-      <PrivyConnect />
+      <PrivyConnect onConnect={onNext} />
     </Slide>
   )
 }

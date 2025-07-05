@@ -1,8 +1,7 @@
 'use client'
 
 import { PrivyProvider } from '@privy-io/react-auth'
-
-console.log(process.env.NEXT_PUBLIC_PRIVY_APP_ID)
+import { zircuit, zircuitTestnet } from 'viem/chains'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -24,6 +23,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
             'wallet_connect',
           ],
         },
+        defaultChain: zircuit,
+        supportedChains: [zircuit, zircuitTestnet],
         loginMethods: ['email', 'wallet'],
         embeddedWallets: {
           createOnLogin: 'users-without-wallets',

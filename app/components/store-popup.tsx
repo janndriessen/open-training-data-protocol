@@ -115,7 +115,7 @@ export function StoringTrainingPopup({
                 Transaction Hash:
               </div>
               <a
-                href={`https://explorer.garfield-testnet.zircuit.com/${txHash}`}
+                href={`https://explorer.garfield-testnet.zircuit.com/tx/${txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-800 underline text-sm font-mono"

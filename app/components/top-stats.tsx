@@ -17,34 +17,38 @@ const data = [
   { value: 2 },
 ]
 
-export function TopStats() {
+export function TopStats({ onClick }: { onClick: () => void }) {
   return (
-    <div className="min-w-lg mx-auto space-y-4">
-      <Card className="p-4">
-        <CardContent className="p-0">
-          <h2 className="text-gray-500 text-sm mb-2">Recent Activity</h2>
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="text-4xl font-bold">8,31K</div>
-              <div className="text-gray-500 text-sm">313 Calories</div>
+    <div className="min-w-sm mx-auto space-y-4">
+      <div className="flex flex-row space-x-4">
+        <Card className="p-4">
+          <CardContent className="p-0">
+            <h2 className="text-gray-500 text-sm mb-2">Recent Activity</h2>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-4xl font-bold">8,31K</div>
+                <div className="text-gray-500 text-sm">313 Calories</div>
+              </div>
+              <div className="h-16 w-28">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={data}>
+                    <Line
+                      type="monotone"
+                      dataKey="value"
+                      stroke="#4F46E5"
+                      strokeWidth={2}
+                      dot={false}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
-            <div className="h-16 w-28">
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={data}>
-                  <Line
-                    type="monotone"
-                    dataKey="value"
-                    stroke="#4F46E5"
-                    strokeWidth={2}
-                    dot={false}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
+          </CardContent>
+        </Card>
+        <Button variant="default" asChild size="sm">
+          <button onClick={onClick}>Store onchain</button>
+        </Button>
+      </div>
       <Card className="p-4 bg-black text-white">
         <CardContent className="p-0 space-y-4">
           <div className="flex">

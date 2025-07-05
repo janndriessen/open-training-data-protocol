@@ -76,7 +76,7 @@ function Slide({
       {title && (
         <motion.h2
           variants={itemVariants}
-          className="text-6xl font-bold text-center mb-16 text-black"
+          className="text-6xl font-bold text-center mb-4 text-black"
         >
           {title}
         </motion.h2>
@@ -89,7 +89,7 @@ function Slide({
           <Button
             onClick={onNext}
             size="lg"
-            className="text-lg px-8 py-4 rounded-full bg-black text-white hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
+            className="text-lg px-4 py-4 rounded-full bg-black text-white hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             Next
             <ArrowRight className="ml-2 h-5 w-5" />
@@ -113,7 +113,7 @@ function WelcomeActionButton({
   disabled?: boolean
 }) {
   const baseClass =
-    'text-xl px-8 py-4 min-h-16 rounded-full transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl w-full md:w-auto'
+    'text-xl px-4 py-4 min-h-16 rounded-full transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl'
   const variantClass =
     variant === 'outline'
       ? 'border-black text-black hover:bg-gray-100'
@@ -121,7 +121,7 @@ function WelcomeActionButton({
   return (
     <Button
       onClick={onClick}
-      size="lg"
+      size="sm"
       variant={variant === 'outline' ? 'outline' : undefined}
       className={`${baseClass} ${variantClass}`}
       disabled={disabled}
@@ -145,18 +145,19 @@ function WelcomeStep({
   return (
     <Slide title="Open Training Data Protocol">
       <div className="flex flex-col items-center w-full max-w-xl">
-        <h2 className="text-4xl font-semibold text-center mb-8 text-gray-700">
+        <h2 className="text-5xl font-semibold text-center mb-8 text-gray-400">
           Free your training data
         </h2>
+        <p className="text-6xl mb-16">🏃‍♀️🏃🚴‍♀️🏋️🏄‍♂️⛷️🏊‍♂️</p>
         <div className="flex flex-col gap-4 w-full justify-center">
           <WelcomeActionButton
             onClick={onShowOnchain}
             disabled={loadingOptions}
           >
-            {loadingOptions ? 'Loading...' : 'Show my onchain training data'}
+            {loadingOptions ? 'Loading...' : 'Show my onchain Training Data'}
           </WelcomeActionButton>
           <WelcomeActionButton onClick={onUpload} variant="outline">
-            Upload new training data
+            Upload new Training Data
           </WelcomeActionButton>
         </div>
       </div>

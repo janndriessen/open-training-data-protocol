@@ -3,13 +3,14 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowRight } from 'lucide-react'
+import { usePrivy } from '@privy-io/react-auth'
 
 import { PrivyConnect } from '@/components/privy'
 import { StravaConnectButton } from '@/components/strava-connect'
 import { Button } from '@/components/ui/button'
 
 // Types
-type Step = 'welcome' | 'signin' | 'select' | 'dashboard'
+type Step = 'welcome' | 'signin' | 'select' | 'connect'
 
 // Custom hook for managing flow state
 function useMultiStepFlow(steps: Step[], initialStep: Step = steps[0]) {
@@ -217,8 +218,8 @@ function SelectStep({ onNext }: { onNext: () => void }) {
   )
 }
 
-// Dashboard Step Component
-function DashboardStep({ onNext }: { onNext: () => void }) {
+// Connect Step Component
+function ConnectStep({ onNext }: { onNext: () => void }) {
   return (
     <Slide title="" onNext={onNext} isLastStep={true}>
       <PrivyConnect onConnect={onNext} />
@@ -228,7 +229,8 @@ function DashboardStep({ onNext }: { onNext: () => void }) {
 
 // Main Onboarding Flow Component
 export default function OnboardingFlow() {
-  const steps: Step[] = ['welcome', 'signin', 'select', 'dashboard']
+  const { ready, authenticated } = usePrivy()
+  const steps: Step[] = ['welcome', 'signin', 'select', 'connect']
   const { currentStep, direction, nextStep, setStep, isLastStep } =
     useMultiStepFlow(steps)
 
@@ -256,7 +258,13 @@ export default function OnboardingFlow() {
       case 'welcome':
         return (
           <WelcomeStep
-            onShowOnchain={() => setStep('dashboard')}
+            onShowOnchain={() => {
+              if (ready && authenticated) {
+                setStep('select')
+              } else {
+                setStep('connect')
+              }
+            }}
             onUpload={() => setStep('signin')}
           />
         )
@@ -264,9 +272,9 @@ export default function OnboardingFlow() {
         return <SignInStep onNext={nextStep} />
       case 'select':
         return <SelectStep onNext={nextStep} />
-      case 'dashboard':
+      case 'connect':
         return (
-          <DashboardStep onNext={() => (window.location.href = '/dashboard')} />
+          <ConnectStep onNext={() => (window.location.href = '/dashboard')} />
         )
       default:
         return null

@@ -13,8 +13,6 @@ import { StoringTrainingPopup } from '@/components/store-popup'
 import { useActivity } from '@/hooks/use-activity'
 import { Skeleton } from '@/components/ui/skeleton'
 
-import data from './data.json'
-
 export default function Page() {
   const [isStoringTrainingPopupOpen, setIsStoringTrainingPopupOpen] =
     useState(false)

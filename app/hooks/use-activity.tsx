@@ -3,6 +3,10 @@
 import { createContext, useContext, useState, ReactNode } from 'react'
 import { useQuery, useMutation } from '@tanstack/react-query'
 
+import { stringToBytes32 } from '@/lib/utils'
+
+import { useStoreActivity } from './use-store'
+
 interface ActivityContextValue {
   // Query result
   data: any
@@ -43,6 +47,7 @@ export function ActivityProvider({
 
   // State for transaction hash
   const [txHash, setTxHash] = useState<string | null>(null)
+  const { store } = useStoreActivity()
 
   // Mutation for uploading the file (POST /api/blob)
   const uploadMutation = useMutation({
@@ -54,27 +59,42 @@ export function ActivityProvider({
       })
       if (!res.ok) throw new Error('Failed to upload file')
       const data = await res.json()
-      // Expecting { hash: string }
-      return data.hash as string
+
+      let blobId = data.blobId
+      const uploadId = data.uploadId
+      console.log(uploadId, blobId, 'Initial')
+
+      // Poll for blobId if not present
+      if (!blobId && uploadId) {
+        for (let i = 0; i < 10; i++) {
+          // up to 100s
+          await new Promise((resolve) => setTimeout(resolve, 10000))
+          const statusRes = await fetch(`/api/blob/status?uploadId=${uploadId}`)
+          if (!statusRes.ok) continue
+          const statusData = await statusRes.json()
+          console.log(i, statusData.blobId)
+          if (statusData.blobId) {
+            blobId = statusData.blobId
+            break
+          }
+        }
+        if (!blobId) throw new Error('Timed out waiting for blobId')
+      }
+
+      return { blobId: '0000' }
     },
   })
 
   // Mutation for calling the contract (using the hash)
   const contractMutation = useMutation({
-    mutationFn: async (hash: string) => {
-      // TODO: Replace with actual contract call logic
-      // For now, simulate with a fetch or a delay
-      // Example: POST /api/contract with { hash, type }
-      //   const res = await fetch('/api/contract', {
-      //     method: 'POST',
-      //     headers: { 'Content-Type': 'application/json' },
-      //     body: JSON.stringify({ hash, type }),
-      //   })
-      //   if (!res.ok) throw new Error('Failed to call contract')
-      //   const data = await res.json()
-      //   // Expecting { txHash: string }
-      //   return data.txHash as string
-      return '0x1234567890'
+    mutationFn: async (blobId: string) => {
+      const txHash = await store({
+        activityType: 0,
+        fileId: stringToBytes32(blobId),
+        timestamp: 1751736689,
+        duration: 100,
+      })
+      return txHash
     },
     onSuccess: (txHash) => setTxHash(txHash),
   })
@@ -82,8 +102,8 @@ export function ActivityProvider({
   const storeActivity = async (file: File | null) => {
     setTxHash(null)
     try {
-      const hash = await uploadMutation.mutateAsync(file)
-      await contractMutation.mutateAsync(hash)
+      const { blobId } = await uploadMutation.mutateAsync(file)
+      await contractMutation.mutateAsync(blobId)
     } catch (e) {
       // Errors are handled by TanStack Query
     }

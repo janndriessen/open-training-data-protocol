@@ -1,7 +1,7 @@
 'use client'
 
 import { PrivyProvider } from '@privy-io/react-auth'
-import { zircuit, zircuitTestnet } from 'viem/chains'
+import { zircuit, zircuitGarfieldTestnet } from 'viem/chains'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState } from 'react'
 
@@ -26,8 +26,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
             'wallet_connect',
           ],
         },
-        defaultChain: zircuit,
-        supportedChains: [zircuit, zircuitTestnet],
+        defaultChain: zircuitGarfieldTestnet,
+        supportedChains: [zircuitGarfieldTestnet, zircuit],
         loginMethods: ['email', 'wallet'],
         embeddedWallets: {
           createOnLogin: 'users-without-wallets',

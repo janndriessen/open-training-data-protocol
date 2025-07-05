@@ -38,7 +38,6 @@ function useMultiStepFlow(steps: Step[], initialStep: Step = steps[0]) {
     direction,
     nextStep,
     setStep,
-    isLastStep: steps.indexOf(currentStep) === steps.length - 1,
   }
 }
 
@@ -46,12 +45,10 @@ function useMultiStepFlow(steps: Step[], initialStep: Step = steps[0]) {
 function Slide({
   title,
   onNext,
-  isLastStep = false,
   children,
 }: {
   title: string
   onNext?: () => void
-  isLastStep?: boolean
   children?: React.ReactNode
 }) {
   const containerVariants = {
@@ -87,14 +84,14 @@ function Slide({
 
       {children}
 
-      {onNext && !isLastStep && (
+      {onNext && (
         <motion.div variants={itemVariants}>
           <Button
             onClick={onNext}
             size="lg"
             className="text-lg px-8 py-4 rounded-full bg-black text-white hover:bg-gray-800 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
-            {isLastStep ? 'Get Started' : 'Next'}
+            Next
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </motion.div>
@@ -229,7 +226,7 @@ function SelectStep({
 // Connect Step Component
 function ConnectStep({ onNext }: { onNext: () => void }) {
   return (
-    <Slide title="" onNext={onNext} isLastStep={true}>
+    <Slide title="" onNext={onNext}>
       <PrivyConnect onConnect={onNext} />
     </Slide>
   )
@@ -239,8 +236,7 @@ function ConnectStep({ onNext }: { onNext: () => void }) {
 export default function OnboardingFlow() {
   const { ready, authenticated, user } = usePrivy()
   const steps: Step[] = ['welcome', 'signin', 'select', 'connect']
-  const { currentStep, direction, nextStep, setStep, isLastStep } =
-    useMultiStepFlow(steps)
+  const { currentStep, direction, nextStep, setStep } = useMultiStepFlow(steps)
 
   const [selectOptions, setSelectOptions] = useState<SelectListItem[]>([])
   const [loadingOptions, setLoadingOptions] = useState(false)

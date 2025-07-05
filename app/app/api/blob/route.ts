@@ -7,7 +7,7 @@ import { getSigner } from '@/app/api/blob/signer'
 
 const vaultId = '99e4890c-da5a-4c3c-b60b-323d372920ae'
 
-export async function POST(request: Request) {
+export async function POST() {
   try {
     const keypair = getSigner()
 
@@ -33,10 +33,18 @@ export async function POST(request: Request) {
       'files',
       fileName
     )
-    const fileBuffer = await fs.readFile(filePath)
-    const uploadId = await tusky.file.upload(vault.id, fileBuffer)
 
-    return NextResponse.json({ hash: uploadId }, { status: 200 })
+    const fileBuffer = await fs.readFile(filePath)
+
+    const uploadId = await tusky.file.upload(vault.id, fileBuffer)
+    const fileMetadata = await tusky.file.get(uploadId)
+
+    console.log(fileMetadata, uploadId)
+
+    return NextResponse.json(
+      { uploadId, blobId: fileMetadata.blobId },
+      { status: 200 }
+    )
   } catch (error) {
     console.error(error)
     return NextResponse.json(

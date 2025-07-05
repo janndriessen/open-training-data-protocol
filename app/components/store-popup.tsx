@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -115,12 +115,12 @@ export function StoringTrainingPopup({
                 Transaction Hash:
               </div>
               <a
-                href={`https://explorer.zircuit.com/tx/${txHash}`}
+                href={`https://explorer.garfield-testnet.zircuit.com/${txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-800 underline text-sm font-mono"
               >
-                {txHash}
+                {txHash.slice(0, 6)}...{txHash.slice(-4)}
               </a>
             </div>
           )}

@@ -3,11 +3,12 @@
 
 import { LineChart, Line, ResponsiveContainer } from 'recharts'
 
+import { ListApiSuccessResponse } from '@/app/api/list/route'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 
-const data = [
+const chartData = [
   { value: 0 },
   { value: 2 },
   { value: 3 },
@@ -17,21 +18,31 @@ const data = [
   { value: 2 },
 ]
 
-export function TopStats({ onClick }: { onClick: () => void }) {
+export function TopStats({
+  data,
+  onClick,
+}: {
+  data: ListApiSuccessResponse
+  onClick: () => void
+}) {
   return (
-    <div className="min-w-sm mx-auto space-y-4">
-      <div className="flex flex-row space-x-4">
-        <Card className="p-4">
+    <div className="flex flex-row gap-4 px-6 w-full">
+      <div className="flex flex-row space-x-4 flex-1">
+        <Card className="p-4 flex-1">
           <CardContent className="p-0">
-            <h2 className="text-gray-500 text-sm mb-2">Recent Activity</h2>
+            <h2 className="text-gray-500 text-sm mb-2">
+              {data.session.activity_type}
+            </h2>
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-4xl font-bold">8,31K</div>
-                <div className="text-gray-500 text-sm">313 Calories</div>
+                <div className="text-4xl font-bold">
+                  {data.summary.total_distance_km} km
+                </div>
+                <div className="text-gray-500 text-sm">315 Calories</div>
               </div>
               <div className="h-16 w-28">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={data}>
+                  <LineChart data={chartData}>
                     <Line
                       type="monotone"
                       dataKey="value"
@@ -45,19 +56,23 @@ export function TopStats({ onClick }: { onClick: () => void }) {
             </div>
           </CardContent>
         </Card>
-        <Button variant="default" asChild size="sm">
-          <button onClick={onClick}>Store onchain</button>
-        </Button>
       </div>
-      <Card className="p-4 bg-black text-white">
+      <Card className="p-4 bg-gray-900 text-white flex-1">
         <CardContent className="p-0 space-y-4">
-          <div className="flex">
-            <h2 className="text-lg font-semibold">Weekly Record!</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold">
+              Nice {data.session.activity_type.toLowerCase()}!
+            </h2>
+            <Button variant="default" asChild size="sm">
+              <button onClick={onClick}>Store onchain</button>
+            </Button>
           </div>
           <div className="flex flew-row text-sm">
             <div className="flex flex-col text-left">
-              <div className="text-gray-500">Activities</div>
-              <div className="font-bold text-lg">5</div>
+              <div className="text-gray-500">Average Speed</div>
+              <div className="font-bold text-lg">
+                {data.summary.average_speed_kph} km/h
+              </div>
             </div>{' '}
             <Separator
               orientation="vertical"
@@ -65,7 +80,9 @@ export function TopStats({ onClick }: { onClick: () => void }) {
             />
             <div className="flex flex-col text-left">
               <div className="text-gray-500">Time</div>
-              <div className="font-bold text-lg">7h 54m</div>
+              <div className="font-bold text-lg">
+                {formatSecondsToMMSS(data.summary.moving_time_sec)}
+              </div>
             </div>
             <Separator
               orientation="vertical"
@@ -73,11 +90,19 @@ export function TopStats({ onClick }: { onClick: () => void }) {
             />
             <div className="flex flex-col text-left">
               <div className="text-gray-500">Distance</div>
-              <div className="font-bold text-lg">95.31K</div>
+              <div className="font-bold text-lg">
+                {data.summary.total_distance_km} km
+              </div>
             </div>
           </div>
         </CardContent>
       </Card>
     </div>
   )
+}
+
+function formatSecondsToMMSS(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m}:${s.toString().padStart(2, '0')}`
 }

@@ -4,6 +4,20 @@ import path from 'path'
 // @ts-expect-error: No types for 'fit-file-parser'
 import FitParser from 'fit-file-parser'
 
+/**
+ * Success response for GET /api/list
+ */
+export interface ListApiSuccessResponse {
+  session: any // The session object from the .fit file (shape depends on file)
+  summary: {
+    total_distance_km: number
+    moving_time_sec: number
+    elapsed_time_sec: number
+    average_speed_kph: number
+    average_pace_min_per_km: number
+  }
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const type = searchParams.get('type')

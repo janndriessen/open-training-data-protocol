@@ -1,6 +1,9 @@
-import { IconTrendingDown, IconTrendingUp } from "@tabler/icons-react"
+'use client'
 
-import { Badge } from "@/components/ui/badge"
+import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react'
+
+import { ListApiSuccessResponse } from '@/app/api/list/route'
+import { Badge } from '@/components/ui/badge'
 import {
   Card,
   CardAction,
@@ -8,16 +11,16 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from '@/components/ui/card'
 
-export function SectionCards() {
+export function SectionCards({ data }: { data: ListApiSuccessResponse }) {
   return (
     <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Total Revenue</CardDescription>
+          <CardDescription>Avg Speed</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            $1,250.00
+            {data.summary.average_speed_kph} km/h
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -30,16 +33,14 @@ export function SectionCards() {
           <div className="line-clamp-1 flex gap-2 font-medium">
             Trending up this month <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">
-            Visitors for the last 6 months
-          </div>
+          <div className="text-muted-foreground">You're getting faster!</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>New Customers</CardDescription>
+          <CardDescription>Distance</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            1,234
+            {data.summary.total_distance_km} km
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -53,15 +54,15 @@ export function SectionCards() {
             Down 20% this period <IconTrendingDown className="size-4" />
           </div>
           <div className="text-muted-foreground">
-            Acquisition needs attention
+            See how you can log some more distance!
           </div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
         <CardHeader>
-          <CardDescription>Active Accounts</CardDescription>
+          <CardDescription>Time</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl">
-            45,678
+            {formatSecondsToMMSS(data.summary.moving_time_sec)}
           </CardTitle>
           <CardAction>
             <Badge variant="outline">
@@ -72,9 +73,9 @@ export function SectionCards() {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm">
           <div className="line-clamp-1 flex gap-2 font-medium">
-            Strong user retention <IconTrendingUp className="size-4" />
+            You're getting faster! <IconTrendingUp className="size-4" />
           </div>
-          <div className="text-muted-foreground">Engagement exceed targets</div>
+          <div className="text-muted-foreground">Keep on training!</div>
         </CardFooter>
       </Card>
       <Card className="@container/card">
@@ -99,4 +100,10 @@ export function SectionCards() {
       </Card>
     </div>
   )
+}
+
+function formatSecondsToMMSS(seconds: number): string {
+  const m = Math.floor(seconds / 60)
+  const s = seconds % 60
+  return `${m}:${s.toString().padStart(2, '0')}`
 }

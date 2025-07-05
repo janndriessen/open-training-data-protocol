@@ -36,7 +36,6 @@ export function StoringTrainingPopup({
       onClose()
     }
   }
-  console.log(uploadComplete, uploading, txHash)
 
   return (
     <AlertDialog open={isOpen}>

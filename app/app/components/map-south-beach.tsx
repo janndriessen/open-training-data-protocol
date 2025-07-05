@@ -28,6 +28,7 @@ export function MapSouthBeach() {
         overflow: 'hidden',
         marginLeft: 24,
         marginRight: 24,
+        zIndex: 1,
       }}
     >
       <MapContainer

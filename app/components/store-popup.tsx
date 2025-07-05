@@ -39,7 +39,7 @@ export function StoringTrainingPopup({
 
   return (
     <AlertDialog open={isOpen}>
-      <AlertDialogContent className="sm:max-w-md">
+      <AlertDialogContent className="sm:max-w-md z-[10000]">
         <AlertDialogHeader>
           <AlertDialogTitle className="text-center">
             Storing Training

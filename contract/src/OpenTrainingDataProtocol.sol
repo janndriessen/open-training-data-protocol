@@ -97,7 +97,7 @@ contract OpenTrainingDataProtocol {
     /**
      * @dev Get activity details
      * @param activitiyId Activity ID
-     * @return Activity struct
+     * @return Activity struct (if it exists)
      */
     function getActivity(bytes32 activitiyId) external view returns (Activity memory) {
         Activity memory activity = activities[activitiyId];

@@ -81,8 +81,7 @@ export function ActivityProvider({
         if (!blobId) throw new Error('Timed out waiting for blobId')
       }
 
-      // FIXME: change to blobId
-      return { blobId: '0000' }
+      return { blobId }
     },
   })
 

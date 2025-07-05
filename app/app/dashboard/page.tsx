@@ -9,12 +9,15 @@ import { SiteHeader } from '@/components/site-header'
 import { TopStats } from '@/components/top-stats'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { StoringTrainingPopup } from '@/components/store-popup'
+import { useActivity } from '@/hooks/use-activity'
 
 import data from './data.json'
 
 export default function Page() {
+  const { data: runData } = useActivity('run')
   const [isStoringTrainingPopupOpen, setIsStoringTrainingPopupOpen] =
     useState(false)
+  console.log(runData)
   return (
     <SidebarProvider
       style={

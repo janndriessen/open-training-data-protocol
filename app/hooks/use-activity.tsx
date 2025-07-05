@@ -65,7 +65,7 @@ export function ActivityProvider({
       console.log(uploadId, blobId, 'Initial')
 
       // Poll for blobId if not present
-      if (!blobId && uploadId) {
+      if ((!blobId || blobId === 'unknown') && uploadId) {
         for (let i = 0; i < 10; i++) {
           // up to 100s
           await new Promise((resolve) => setTimeout(resolve, 10000))
@@ -73,7 +73,7 @@ export function ActivityProvider({
           if (!statusRes.ok) continue
           const statusData = await statusRes.json()
           console.log(i, statusData.blobId)
-          if (statusData.blobId) {
+          if (statusData.blobId && statusData.blobId !== 'unknown') {
             blobId = statusData.blobId
             break
           }
@@ -81,6 +81,7 @@ export function ActivityProvider({
         if (!blobId) throw new Error('Timed out waiting for blobId')
       }
 
+      // FIXME: change to blobId
       return { blobId: '0000' }
     },
   })

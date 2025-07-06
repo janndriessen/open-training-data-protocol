@@ -1,4 +1,4 @@
-# open-training-data-protocol
+# Open Training Data Protocol
 Submission for ETHGlobal Cannes 2025
 
 The Open Training Data Protocol (OTDP) is a lightweight, open standard designed to store and exchange training activity data recorded by devices during sports such as swimming, cycling, running, and more.

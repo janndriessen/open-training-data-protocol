@@ -43,7 +43,7 @@ contract OpenTrainingDataProtocol {
     }
     
     /**
-        * @dev Store a new activity
+     * @dev Store a new activity
      * @param fileId Hash of the Walrus uploadId
      * @param activityType Activity type ID (0: Swim, 1: Bike, 2: Run)
      * @param timestamp Activity timestamp
